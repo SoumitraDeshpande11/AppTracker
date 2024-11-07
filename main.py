@@ -9,14 +9,14 @@ import subprocess
 
 class AppTracker:
     def __init__(self):
-        self.app_times = defaultdict(float)  # Dictionary to store app usage times
-        self.current_app = None  # Currently active app
-        self.running = True  # Control flag for the tracking loop
+        self.app_times = defaultdict(float)  
+        self.current_app = None 
+        self.running = True  
 
     def get_active_app(self):
-        # Get the name of the active application using AppleScript
+        
         try:
-            # Use osascript to get the name of the frontmost application
+           
             script = 'tell application "System Events" to get name of first application process whose frontmost is true'
             active_app = subprocess.check_output(['osascript', '-e', script]).strip().decode()
             return active_app
@@ -30,7 +30,7 @@ class AppTracker:
             active_app = self.get_active_app()
             current_time = time.time()
 
-            # Track time spent on the current app
+           
             if active_app and active_app != self.current_app:
                 if self.current_app:
                     time_spent = current_time - last_time
@@ -38,7 +38,7 @@ class AppTracker:
                     last_time = current_time
                 self.current_app = active_app
 
-            time.sleep(1)  # Short delay before checking again
+            time.sleep(1)  
 
     def stop_tracking(self):
         self.running = False
@@ -50,11 +50,11 @@ class AppTrackerUI:
         self.root = tk.Tk()
         self.root.title("App Usage Tracker")
 
-        # UI elements
+        
         self.current_app_label = ttk.Label(self.root, text="Current App: None", font=("Arial", 14))
         self.current_app_label.pack(pady=10)
 
-        # Set up the Treeview with correct column identifiers
+        
         self.usage_tree = ttk.Treeview(self.root, columns=("App Name", "Time Spent"), show='headings')
         self.usage_tree.heading("App Name", text="App Name")
         self.usage_tree.heading("Time Spent", text="Time Spent (seconds)")
@@ -63,7 +63,7 @@ class AppTrackerUI:
         self.quit_button = ttk.Button(self.root, text="Quit", command=self.quit)
         self.quit_button.pack(pady=10)
 
-        # Start the app tracker thread
+        
         self.update_ui_thread = threading.Thread(target=self.update_ui, daemon=True)
         self.update_ui_thread.start()
 
@@ -75,11 +75,11 @@ class AppTrackerUI:
             time.sleep(2)
 
     def update_usage_tree(self):
-        # Clear the tree
+        
         for i in self.usage_tree.get_children():
             self.usage_tree.delete(i)
 
-        # Insert the latest usage data
+       
         for app, time_spent in self.tracker.app_times.items():
             self.usage_tree.insert("", "end", values=(app, f"{time_spent:.2f}"))
 
